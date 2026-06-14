@@ -24,9 +24,10 @@ public struct CartesianRenderer {
         
         guard xSpan > 0 && ySpan > 0 else { return }
         
-        // Calculate dynamic grid spacing
-        let xStep = calculateGridStep(span: xSpan)
-        let yStep = calculateGridStep(span: ySpan)
+        // Calculate dynamic grid spacing (square grid)
+        let gridStep = calculateGridStep(span: xSpan)
+        let xStep = gridStep
+        let yStep = gridStep
         
         // 1. Draw Grid Lines
         drawGridLines(in: context, size: size, viewport: viewport, xStep: xStep, yStep: yStep)
@@ -168,7 +169,7 @@ public struct CartesianRenderer {
                 let canvasPos = viewport.toCanvas(xValue, 0, size: size)
                 let labelText = formatLabelValue(xValue)
                 
-                var resolvedText = context.resolve(Text(labelText).font(font).foregroundColor(labelColor))
+                let resolvedText = context.resolve(Text(labelText).font(font).foregroundColor(labelColor))
                 let textSize = resolvedText.measure(in: size)
                 
                 context.draw(
@@ -192,7 +193,7 @@ public struct CartesianRenderer {
                 let canvasPos = viewport.toCanvas(0, yValue, size: size)
                 let labelText = formatLabelValue(yValue)
                 
-                var resolvedText = context.resolve(Text(labelText).font(font).foregroundColor(labelColor))
+                let resolvedText = context.resolve(Text(labelText).font(font).foregroundColor(labelColor))
                 let textSize = resolvedText.measure(in: size)
                 
                 // Offset left or right depending on side of screen to avoid getting cut off
@@ -207,7 +208,7 @@ public struct CartesianRenderer {
         
         // Draw origin "0"
         if viewport.xMin < 0 && viewport.xMax > 0 && viewport.yMin < 0 && viewport.yMax > 0 {
-            var resolvedText = context.resolve(Text("0").font(font).foregroundColor(labelColor))
+            let resolvedText = context.resolve(Text("0").font(font).foregroundColor(labelColor))
             context.draw(
                 resolvedText,
                 at: CGPoint(x: canvasOrigin.x - 8, y: canvasOrigin.y + 8)

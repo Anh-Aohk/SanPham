@@ -76,7 +76,6 @@ public struct PolarRenderer {
         var r = ringStep
         while r <= maxRadius {
             // Draw ring circle
-            let center = viewport.toCanvas(0, 0, size: size)
             
             // Width/height on canvas for mathematical radius r
             // Convert (-r, r) and (r, -r) to find the canvas bounding box
@@ -180,7 +179,7 @@ public struct PolarRenderer {
             // Only draw label if it is comfortably inside the screen boundaries
             if pos.x < size.width - 20 && pos.x > 20 {
                 let labelText = formatLabelValue(r)
-                var resolvedText = context.resolve(Text(labelText).font(font).foregroundColor(labelColor))
+                let resolvedText = context.resolve(Text(labelText).font(font).foregroundColor(labelColor))
                 let textSize = resolvedText.measure(in: size)
                 
                 context.draw(
@@ -217,7 +216,7 @@ public struct PolarRenderer {
             
             // Only draw inside screen bounds
             if drawPos.x > 15 && drawPos.x < size.width - 15 && drawPos.y > 15 && drawPos.y < size.height - 15 {
-                var resolvedText = context.resolve(Text(label).font(font).foregroundColor(labelColor.opacity(0.75)))
+                let resolvedText = context.resolve(Text(label).font(font).foregroundColor(labelColor.opacity(0.75)))
                 context.draw(resolvedText, at: drawPos)
             }
         }

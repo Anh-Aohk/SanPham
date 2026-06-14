@@ -87,6 +87,21 @@ public final class GraphViewModel {
         parseAndCache(functions[index])
     }
     
+    public var lastCanvasSize: CGSize = .zero
+    
+    public func updateCanvasSize(_ size: CGSize) {
+        guard size.width > 0 && size.height > 0 else { return }
+        if lastCanvasSize != size {
+            lastCanvasSize = size
+            adjustViewportAspectRatio()
+        }
+    }
+    
+    public func adjustViewportAspectRatio() {
+        guard lastCanvasSize.width > 0 && lastCanvasSize.height > 0 else { return }
+        viewport = viewport.adjustedToAspectRatio(for: lastCanvasSize)
+    }
+    
     // MARK: - ViewPort Actions
     public func resetViewportForMode() {
         switch mode {
@@ -96,9 +111,11 @@ public final class GraphViewModel {
             // Polar viewport benefits from a square/symmetrical viewport
             viewport = ViewPort(xMin: -8, xMax: 8, yMin: -8, yMax: 8)
         }
+        adjustViewportAspectRatio()
     }
     
     public func zoom(scale: Double, center: CGPoint, size: CGSize) {
+        updateCanvasSize(size)
         let (mathX, mathY) = viewport.toMath(center, size: size)
         
         let xHalfSpan = (viewport.xMax - viewport.xMin) / 2.0 * scale
@@ -111,6 +128,7 @@ public final class GraphViewModel {
     }
     
     public func pan(translation: CGSize, size: CGSize) {
+        updateCanvasSize(size)
         let xSpan = viewport.xMax - viewport.xMin
         let ySpan = viewport.yMax - viewport.yMin
         

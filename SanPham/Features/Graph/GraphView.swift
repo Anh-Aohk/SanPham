@@ -43,6 +43,9 @@ public struct GraphView: View {
                     )
                 }
             }
+            .onChange(of: size, initial: true) { _, newSize in
+                viewModel.updateCanvasSize(newSize)
+            }
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in

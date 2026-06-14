@@ -21,6 +21,41 @@ public struct ViewPort: Codable, Hashable {
         self.yMax = yMax
     }
     
+    /// Returns a new ViewPort adjusted to match the aspect ratio of the canvas size
+    /// by expanding the smaller dimension around its center.
+    public func adjustedToAspectRatio(for size: CGSize) -> ViewPort {
+        guard size.width > 0 && size.height > 0 else { return self }
+        
+        let cx = (xMin + xMax) / 2.0
+        let cy = (yMin + yMax) / 2.0
+        
+        let currentXSpan = xMax - xMin
+        let currentYSpan = yMax - yMin
+        
+        let canvasAspectRatio = Double(size.width) / Double(size.height)
+        
+        var newXMin = xMin
+        var newXMax = xMax
+        var newYMin = yMin
+        var newYMax = yMax
+        
+        if currentXSpan / Double(size.width) > currentYSpan / Double(size.height) {
+            // X-span is relatively larger (scale along Y would be larger, meaning squashed vertically).
+            // Expand Y-span to match the scale along X.
+            let newYSpan = currentXSpan / canvasAspectRatio
+            newYMin = cy - newYSpan / 2.0
+            newYMax = cy + newYSpan / 2.0
+        } else {
+            // Y-span is relatively larger (scale along X would be larger, meaning squashed horizontally).
+            // Expand X-span to match the scale along Y.
+            let newXSpan = currentYSpan * canvasAspectRatio
+            newXMin = cx - newXSpan / 2.0
+            newXMax = cx + newXSpan / 2.0
+        }
+        
+        return ViewPort(xMin: newXMin, xMax: newXMax, yMin: newYMin, yMax: newYMax)
+    }
+    
     /// Converts mathematical coordinates to pixel coordinates on the canvas.
     /// - Parameters:
     ///   - mathX: The x coordinate in mathematical space.
